@@ -1,3 +1,7 @@
+const emailer = require('./emailer');
+
+
+
 const express = require('express');
 const cors = require('cors');
 const { PORT, CORS_ALLOWED_ORIGINS, inTestEnv } = require('./env');
@@ -20,7 +24,32 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(express.json())
 
+app.post('/contact',(req, res)=>{
+  const {firstname, lastname, comment, phonenumber}=req.body
+  emailer.sendMail(
+    {
+      from: 'benoitredondo@gmail.com',
+      to: 'benoitredondo@hotmail.com',
+      subject: 'Un utilisateur a tenté de vous contacter',
+      text: `${firstname} ${lastname} vous a envoyé le message suivant : ${comment}, vous pouvez le joindre au ${phonenumber}`,
+      html: `${firstname} ${lastname} vous a envoyé le message suivant : ${comment}, vous pouvez le joindre au ${phonenumber}`,
+    },
+    (err, info) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500)
+      }
+
+      else {
+        console.log(info);
+        res.sendStatus(200)
+      }
+      
+    }
+  );
+})
 // server setup
 app.listen(PORT, () => {
   if (!inTestEnv) {
@@ -42,3 +71,7 @@ process.on('beforeExit', () => {
     if (error) console.error(JSON.stringify(error), error.stack);
   });
 });
+
+
+
+

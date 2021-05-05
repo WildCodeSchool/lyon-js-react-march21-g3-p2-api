@@ -24,3 +24,4 @@ module.exports = {
   PORT,
   CORS_ALLOWED_ORIGINS,
 };
+
